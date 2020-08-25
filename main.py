@@ -2,19 +2,19 @@
 
 
 
-
+from datetime import datetime
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/compscsoc' 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:K@n@k2006@localhost/compsoc' 
 # THIS IS MYSQL database connection  and the syntax is 'mysql://USER:PASSWORD@SERVER/DATABASE' I have no password so here my pass is blank 
 
 db = SQLAlchemy(app)  # INITIALIZE THE DATABASE
 
-class Contacts(db.Model):   # This Contact Class is for contact table 
+class Contact(db.Model):   # This Contact Class is for contact table 
     QsnId = db.Column(db.Integer, primary_key=True)
     Name = db.Column(db.String(35), nullable=False)   
     EmailId = db.Column(db.String(40), nullable=False)
@@ -49,7 +49,7 @@ def contact():
         Msg=request.form.get('MSG')
 
 
-        entry=Contacts(Name=Name, EmailId=EmailId, PhoneNum=ContactNum, Msg=Msg) # Here lhs are from class attribute and rhs are if ke andar wale
+        entry=Contact(Name=Name, EmailId=EmailId, PhoneNum=ContactNum, Msg=Msg, DT=datetime.now()) # Here lhs are from class attribute and rhs are if ke andar wale
         db.session.add(entry)
         db.session.commit()
 
