@@ -1,26 +1,38 @@
 
-
-
-
-
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
+import json
+from datetime import datetime
+
+
 
 app = Flask(__name__)
 
+app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:@localhost/compscsoc"
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/compscsoc' 
-# THIS IS MYSQL database connection  and the syntax is 'mysql://USER:PASSWORD@SERVER/DATABASE' I have no password so here my pass is blank 
+db = SQLAlchemy(app) # INITIALIZE THE DATABASE
 
-db = SQLAlchemy(app)  # INITIALIZE THE DATABASE
 
-class Contacts(db.Model):   # This Contact Class is for contact table 
-    QsnId = db.Column(db.Integer, primary_key=True)
-    Name = db.Column(db.String(35), nullable=False)   
-    EmailId = db.Column(db.String(40), nullable=False)
+class Contacts(db.Model): # This Contact Class is for contact table 
+    __tablename__='contact'
+    Qstnd = db.Column(db.Integer, primary_key=True)
+    Name = db.Column(db.String(80), nullable=False)
+    EmailId = db.Column(db.String(20), nullable=False)
     PhoneNum = db.Column(db.String(12), nullable=False)
-    Msg = db.Column(db.String(300), nullable=False)
-    DT = db.Column(db.String(20), nullable=True)
+    Msg = db.Column(db.String(120), nullable=False)
+    DT = db.Column(db.String(12), nullable=True)
+   
+
+class Posts(db.Model): # This Posts Class is for Posts table 
+    __tablename__='Posts'
+    PostId = db.Column(db.Integer, primary_key=True)
+    PostTitle = db.Column(db.String(80), nullable=False)
+    PostContent = db.Column(db.String(500), nullable=False)
+    ImgFile = db.Column(db.String(50), nullable=False)
+    PostedBy = db.Column(db.String(20), nullable=False)
+    slug = db.Column(db.String(20), nullable=False)
+    DT = db.Column(db.String(12), nullable=True)
+
 
 # Default value of nullabe is True so We make it False where for unique it is True so We dont mention we need column in any field
 
@@ -38,7 +50,7 @@ def about():
 
 
 
-@app.route("/contact", methods=["GET","POST"])
+@app.route("/contact", methods=['GET', 'POST'])
 
 def contact():
     if(request.method=='POST'):
@@ -48,8 +60,8 @@ def contact():
         ContactNum=request.form.get('ContactNum')
         Msg=request.form.get('MSG')
 
-
-        entry=Contacts(Name=Name, EmailId=EmailId, PhoneNum=ContactNum, Msg=Msg) # Here lhs are from class attribute and rhs are if ke andar wale
+        entry = Contacts(Name=Name, EmailId=EmailId, PhoneNum=ContactNum, Msg=Msg, DT=datetime.now() )# Here lhs are from class attribute and rhs are if ke andar wale
+        
         db.session.add(entry)
         db.session.commit()
 
@@ -60,16 +72,21 @@ def contact():
 
 
 
-@app.route("/Post")
-def Post():
-    return render_template('Post.html')
 
+@app.route("/Post/<string:post_slug>", methods=['GET'])
+def post_route(post_slug):
+    Post = Posts.query.filter_by(slug=post_slug).first()
+    return render_template('post.html', Post=Post)
 
 
 
 app.run(debug=True)
-app.run(debug=True)
-app.run(debug=True)
+
+
+
+
+
+
 
 
   
