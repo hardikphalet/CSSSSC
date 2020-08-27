@@ -20,13 +20,13 @@
   </head>
 
   <body class="text-center">
-    <form class="form-signin" action="/DashBoard" methods="post">
+    <form class="form-signin" action="/DashBoard" method="post">
       <img class="mb-2" src="{{ url_for('static', filename='img/Logo.png')}}" alt="LOGO" width="300" height="200">
       <h1 class="h3 mb-4 font-weight-normal">Admin Login</h1>
-      <label for="inputEmail" class="sr-only">Email address</label>
-      <input type="email" id="inputEmail" class="form-control" placeholder="UserName" required autofocus>
-      <label for="inputPassword" class="sr-only">Password</label>
-      <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+      <label for="UserName" class="sr-only">UserName </label>
+      <input type="text" name="UserName" id="UserName" class="form-control" placeholder="UserName" required autofocus>
+      <label for="Password" class="sr-only">Password</label>
+      <input type="password" id="Password" Name="Password" class="form-control" placeholder="Password" required>
       <div class="checkbox mb-5">
        
       </div>

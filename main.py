@@ -1,5 +1,5 @@
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
 from flask_sqlalchemy import SQLAlchemy
 import json
 from datetime import datetime
@@ -7,7 +7,7 @@ from datetime import datetime
 
 
 app = Flask(__name__)
-
+app.secret_key='superman'
 app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:@localhost/compscsoc"
 
 db = SQLAlchemy(app) # INITIALIZE THE DATABASE
@@ -71,8 +71,6 @@ def contact():
 
 
 
-
-
 @app.route("/Post/<string:post_slug>", methods=['GET'])
 def post_route(post_slug):
     Post = Posts.query.filter_by(slug=post_slug).first()
@@ -80,12 +78,35 @@ def post_route(post_slug):
 
 @app.route("/DashBoard", methods=['GET','POST'])
 def DashBoard():
-    if request.method=='POST':
-        pass
+
+    if ('Admin' in session and session['Admin']=="CompSSC"):
+        Post=Posts.query.all()
+        return render_template('AdminPanel.html', Post=Post)
+
+    if (request.method=='POST'):
+        UserName=request.form.get('UserName')
+        Password=request.form.get('Password')
+        checkuse='Compssc'
+
+        checkpass='LinusTovald'
+        if(UserName==checkuse and Password==checkpass):
+            # Set The Session Variable
+            session['Admin']=UserName
+            Post=Posts.query.all()
+
+
+
+            return render_template('AdminPanel.html', Posts=Post)
+        else:
+            return render_template('contact.html')
+
+
+
     #    Ridirect To Admin Panel
     else:
         return render_template('SignUp.html')    
-    return render_template('SignUp.html')
+
+    
 
 
 
