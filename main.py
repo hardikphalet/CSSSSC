@@ -78,9 +78,13 @@ def post_route(post_slug):
     Post = Posts.query.filter_by(slug=post_slug).first()
     return render_template('post.html', Post=Post)
 
-@app.route("/DashBoard")
+@app.route("/DashBoard", methods=['GET','POST'])
 def DashBoard():
-   
+    if request.method=='POST':
+        pass
+    #    Ridirect To Admin Panel
+    else:
+        return render_template('SignUp.html')    
     return render_template('SignUp.html')
 
 

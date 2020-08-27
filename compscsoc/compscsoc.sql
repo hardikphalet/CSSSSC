@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 27, 2020 at 10:16 AM
+-- Generation Time: Aug 27, 2020 at 03:43 PM
 -- Server version: 10.1.38-MariaDB
 -- PHP Version: 7.3.2
 
@@ -77,22 +77,6 @@ INSERT INTO `posts` (`PostId`, `PostTitle`, `PostContent`, `ImgFile`, `PostedBy`
 (5, 'NueWaves', 'This fact also has an interesting consequence in the case of piles which make neutrons (these are obviously particles, for anybody’s money!). If we take these neutrons and let them into a long block of graphite, the neutrons di?use and work their way along (Fig. 2-7). They di?use because they are bounced by the atoms, but strictly, in the wave theory, they are bounced by the atoms because of di?raction from the crystal planes. It turns out that if we take a very long piece of graphite, the neutrons that come out the far end are all of long wavelength! In fact, if one plots the intensity as a function of wavelength, we get nothing except for wavelengths longer than a certain minimum (Fig. 2-8). In other words, we can get very slow neutrons that way. Only the slowest neutrons come through; they are not di?racted or scattered by the crystal planes of the graphite, but keep going right through like light through glass, and are not scattered out the sides. There are many other demonstrations of the reality of neutron waves and waves of other particles', '', 'BKP', 'Wave', '2020-08-27 13:27:49'),
 (6, 'Mecha uni', 'drop will land on our nose. This appears to be completely random, yet such a behavior would be predicted by purely classical laws. The exact position of all the drops depends upon the precise wigglings of the water before it goes over the dam. How? The tiniest irregularities are magni?ed in falling, so that we get complete randomness. Obviously, we cannot really predict the position of the drops unless we know the motion of the water absolutely exactly. Speaking more precisely, given an arbitrary accuracy, no matter how precise, one can ?nd a time long enough that we cannot make predictions valid for that long a time. Now the point is that this length of time is not very large. It is not that the time is millions of years if the accuracy is one part in a billion. The time goes, in fact, only logarithmically with the error, and it turns out that in only a very, very tiny time we lose all our information. If the accuracy is taken to be one part in billions and billions and billions—no matter how many billions we wish, provided we do stop somewhere—then we can ?nd a time less than the time it took to state the accuracy—after which we can no longer predict what is going to happen! It is therefore not fair to say that from the apparent freedom and indeterminacy of the human mind, we should have realized that classical “deterministic” physics could not ever hope to understand it, and to welcome quantum mechanics as a release from a “completely mechanistic” universe', '', 'UNIT', 'uniy', '2020-08-27 13:28:50');
 
--- --------------------------------------------------------
-
---
--- Table structure for table `users`
---
-
-CREATE TABLE `users` (
-  `Sno` int(11) NOT NULL,
-  `Name` varchar(40) NOT NULL,
-  `EmailId` varchar(40) NOT NULL,
-  `Password` varchar(100) NOT NULL,
-  `Contact` int(11) NOT NULL,
-  `College` varchar(60) NOT NULL,
-  `DT` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 --
 -- Indexes for dumped tables
 --
@@ -110,12 +94,6 @@ ALTER TABLE `posts`
   ADD PRIMARY KEY (`PostId`);
 
 --
--- Indexes for table `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`Sno`);
-
---
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -130,12 +108,6 @@ ALTER TABLE `contact`
 --
 ALTER TABLE `posts`
   MODIFY `PostId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- AUTO_INCREMENT for table `users`
---
-ALTER TABLE `users`
-  MODIFY `Sno` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
