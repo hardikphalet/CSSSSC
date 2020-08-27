@@ -39,8 +39,8 @@ class Posts(db.Model): # This Posts Class is for Posts table
 
 @app.route("/")
 def home():
-    
-    return render_template('index.html')
+    posts=Posts.query.filter_by().all()[0:4]
+    return render_template('index.html', Posts=posts)
 
 
 @app.route("/about")
@@ -77,6 +77,11 @@ def contact():
 def post_route(post_slug):
     Post = Posts.query.filter_by(slug=post_slug).first()
     return render_template('post.html', Post=Post)
+
+@app.route("/DashBoard")
+def DashBoard():
+   
+    return render_template('SignUp.html')
 
 
 
