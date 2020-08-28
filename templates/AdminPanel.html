@@ -19,7 +19,15 @@
 
     
 <div class="container">
-<h1 class="my-3"> Upload a file </h1>
+  <a href="/edit/0"><button class="btn btn-primary my-4 ">
+ New Article 
+</button> </a>
+
+
+<a href="/Logout"><button class="btn btn-primary my-4" style="margin-left:51rem">
+  Logout
+ </button> </a>
+<h1 class="my-3"> Upload a file </h1> <hr>
 <div class="row">
 <!-- Now we just have to add a file here -->
 </div>
@@ -41,8 +49,8 @@
       <th scope="row">{{Post.PostId}}</th>
       <td>{{Post.PostTitle}}</td>
       <td>{{Post.PostedBy}}</td>
-      <td><button class="btn btn-primary"> edit </button></td>
-      <td><button  class="btn btn-danger "> delete  </button></td>
+      <td><a href="/edit/{{Post.PostId}}"><button class="btn btn-primary"> edit </button></a></td>
+      <td><a href="/delete/{{Post.PostId}}"><button  class="btn btn-danger "> delete  </button></a></td>
      
     
     </tr> {% endfor %}

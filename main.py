@@ -1,5 +1,5 @@
 
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session, redirect
 from flask_sqlalchemy import SQLAlchemy
 import json
 from datetime import datetime
@@ -7,7 +7,7 @@ from datetime import datetime
 
 
 app = Flask(__name__)
-app.secret_key='superman'
+app.secret_key='secretkey'
 app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:@localhost/compscsoc"
 
 db = SQLAlchemy(app) # INITIALIZE THE DATABASE
@@ -76,25 +76,84 @@ def post_route(post_slug):
     Post = Posts.query.filter_by(slug=post_slug).first()
     return render_template('post.html', Post=Post)
 
+
+@app.route("/delete/<string:PostId>", methods = ['GET', 'POST'])
+def delete(PostId):
+    if ('Admin' in session and session['Admin']=="Compssc"): # Only Loggged In user can edit the post
+        post=Posts.query.filter_by(PostId=PostId).first()
+        db.session.delete(post)
+        db.session.commit()    
+    return redirect('/DashBoard')
+
+
+
+@app.route("/Logout")
+def Logout():
+    session.pop('Admin')
+    return redirect('/DashBoard')
+
+@app.route("/edit/<string:PostId>", methods = ['GET', 'POST'])
+def edit(PostId):
+    if ('Admin' in session and session['Admin']=="Compssc"): # Only Loggged In user can edit the post
+        if request.method == 'POST':
+            PrevTitle=request.form.get('Title')
+            PrevContent=request.form.get('Content')
+            PrevSlug=request.form.get('Slug')
+            PrevImg=request.form.get('ImageFile')    
+            Author=request.form.get('WrittenBy')    
+            Dt=datetime.now()
+
+            if PostId=='0':
+                Post = Posts(PostTitle=PrevTitle, PostContent=PrevContent, ImgFile=PrevImg, PostedBy=Author, slug=PrevSlug, DT=Dt)
+                db.session.add(Post)
+                db.session.commit()
+            else:
+                Post=Posts.query.filter_by(PostId=PostId).first()
+                Post.PostTitle     = PrevTitle                                      
+                Post.PostContent  = PrevContent
+                Post.PostedBy  = Author
+                Post.ImgFile  = PrevImg
+                Post.Slug  = PrevSlug
+                Post.DT      = Dt
+                db.session.commit()
+                return redirect('/edit/'+PostId)
+    Post=Posts.query.filter_by(PostId=PostId).first()
+    
+    return render_template('edit.html',  Post=Post, PostId=PostId)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @app.route("/DashBoard", methods=['GET','POST'])
 def DashBoard():
 
-    if ('Admin' in session and session['Admin']=="CompSSC"):
+    if ('Admin' in session and session['Admin']=="Compssc"):
         Post=Posts.query.all()
-        return render_template('AdminPanel.html', Post=Post)
+        return render_template('AdminPanel.html', Posts=Post)
 
     if (request.method=='POST'):
         UserName=request.form.get('UserName')
         Password=request.form.get('Password')
-        checkuse='Compssc'
+        checkuse="Compssc"
 
-        checkpass='LinusTovald'
+        checkpass="LinusTovald"
         if(UserName==checkuse and Password==checkpass):
             # Set The Session Variable
             session['Admin']=UserName
             Post=Posts.query.all()
-
-
 
             return render_template('AdminPanel.html', Posts=Post)
         else:
@@ -105,6 +164,7 @@ def DashBoard():
     #    Ridirect To Admin Panel
     else:
         return render_template('SignUp.html')    
+
 
     
 
