@@ -1,14 +1,16 @@
 
 from flask import Flask, render_template, request, session, redirect
 from flask_sqlalchemy import SQLAlchemy
+
 import json
 from datetime import datetime
-
-
-
+import os
+# from werkzeug import secure_filename 
+from werkzeug.utils import secure_filename  
 app = Flask(__name__)
 app.secret_key='secretkey'
-app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:@localhost/compscsoc"
+app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:@localhost/compscsoc" 
+app.config['UPLOAD_FOLDER'] = "C:\\Users\\Bindal\\Desktop\\Flask\\CompSocBlog\\static\\img"
 
 db = SQLAlchemy(app) # INITIALIZE THE DATABASE
 
@@ -68,6 +70,16 @@ def contact():
 
 
     return render_template('contact.html')
+
+@app.route("/Uploader", methods=['GET', 'POST'])
+def Upload():
+    if ('Admin' in session and session['Admin']=="Compssc"): # Only Loggged In user can edit the post
+        if(request.method=='POST'):
+            FileComing=request.files['ImgF']
+            FileComing.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(FileComing.filename)))
+            return "Upload Complete"
+            
+
 
 
 

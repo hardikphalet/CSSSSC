@@ -28,10 +28,12 @@
   Logout
  </button> </a>
 <h1 class="my-3"> Upload a file </h1> <hr>
-<div class="row">
-<!-- Now we just have to add a file here -->
-</div>
-<!-- <table class="table table-dark my-4"> -->
+<form action="/Uploader" method="post" enctype="multipart/form-data">
+              
+  <input type="file" name="ImgF">
+  <button type="submit" class="btn btn-primary">Submit</button>
+  
+              </form><!-- <table class="table table-dark my-4"> -->
 <table class="table table-dark my-4">
   <thead>
     <tr>
