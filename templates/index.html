@@ -57,9 +57,9 @@ for consistency I also take just 4 articles at a time and then pagination -->
           </a>
                     
           <p class="post-meta">Posted by
-            <a href="#">Start Bootstrap</a>
+            {{Post.PostedBy}}
             on  {{Post.DT}}</p>
-        </div>{{Post.PostContent[0:50]}}....
+        </div>{{Post.PostContent[0:55]}}....
         <hr>
 
       {% endfor %}
@@ -67,7 +67,8 @@ for consistency I also take just 4 articles at a time and then pagination -->
 
         <!-- Pager -->
         <div class="clearfix">
-          <a class="btn btn-primary float-right" href="#">Older Posts &rarr;</a>
+          <a class="btn btn-primary float-right" href="{{Next}}">Newer Posts &rarr;</a>
+          <a class="btn btn-primary float-left" href="{{Prev}}">&larr; Previous Posts </a>
         </div>
       </div>
     </div>

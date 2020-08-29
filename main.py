@@ -2,7 +2,7 @@
 from flask import Flask, render_template, request, session, redirect
 from flask_sqlalchemy import SQLAlchemy
 
-import json
+import math
 from datetime import datetime
 import os
 # from werkzeug import secure_filename 
@@ -41,8 +41,39 @@ class Posts(db.Model): # This Posts Class is for Posts table
 
 @app.route("/")
 def home():
-    posts=Posts.query.filter_by().all()[0:4]
-    return render_template('index.html', Posts=posts)
+    posts=Posts.query.filter_by().all()#[0:4]
+    
+    Len=len(posts)
+    last=math.ceil(Len/4)
+    
+
+
+    Page=(request.args.get('Page'))
+
+
+
+    if(not str(Page).isnumeric()):
+        Page=1
+        
+    Page=int(Page)
+    posts= posts[int((Page-1)*4):int((Page-1)*4+4)]
+
+
+    if (Page==1):
+        Previous='#'
+        Next="/?Page="+str(Page+1)
+    elif (Page==last):
+        Next='#'
+        Previous="/?Page="+str(Page-1)
+    else:
+        Previous="/?Page="+str(Page-1)
+        Next="/?Page="+str(Page+1)
+
+
+
+
+    posts=Posts.query.filter_by().all()[int((Page-1)*4):int((Page-1)*4+4)]
+    return render_template('index.html', Posts=posts, Prev=Previous, Next=Next )
 
 
 @app.route("/about")
