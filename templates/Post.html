@@ -1,0 +1,48 @@
+
+
+{% extends "layout.html" %}  <!-- This line is for the layout.
+
+  we fetch the header from layout.html so extends it to that 
+  
+  
+  when I extend it to the layout it go to according to that template and where it found blocks of body it fetch it from here  
+  
+  
+  
+  -->
+  {% block body %}   
+  <!-- Page Header -->
+{% set IMAGE= 'img/' +Post.ImgFile  %}
+  
+  <header class="masthead" style="background-image: url(' {{ url_for('static', filename=IMAGE)}}'">
+
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+            <h1>{{Post.PostTitle}}</h1>
+            
+            <span class="meta">Posted by
+              <a href="#">{{Post.PostedBy}}</a>
+              {{Post.DT}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          {{Post.PostContent}}
+
+          </div>
+      </div>
+    </div>
+  </article>
+
+
+{% endblock %}

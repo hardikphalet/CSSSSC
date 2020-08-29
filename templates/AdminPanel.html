@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+{%block body%}    
+
+
+
+<header class="masthead" style="background-image: url(' {{ url_for('static', filename='img/Writer.jpg')}}'">
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        <div class="page-heading">
+          <h1>Admin Panel</h1>
+          <span class="subheading">Here we write the world's best posts</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    
+<div class="container">
+  <a href="/edit/0"><button class="btn btn-primary my-4 ">
+ New Article 
+</button> </a>
+
+
+<a href="/Logout"><button class="btn btn-primary my-4" style="margin-left:51rem">
+  Logout
+ </button> </a>
+<h1 class="my-3"> Upload a file </h1> <hr>
+<form action="/Uploader" method="post" enctype="multipart/form-data">
+              
+  <input type="file" name="ImgF">
+  <button type="submit" class="btn btn-primary">Submit</button>
+  
+              </form><!-- <table class="table table-dark my-4"> -->
+<table class="table table-dark my-4">
+  <thead>
+    <tr>
+      <th scope="col">Sno</th>
+      <th scope="col">Title</th>
+      <th scope="col">PostedBy</th>
+      <th scope="col">Edit</th>
+      <th scope="col">Delete</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    {%for Post in Posts%} 
+    <tr>
+      <th scope="row">{{Post.PostId}}</th>
+      <td>{{Post.PostTitle}}</td>
+      <td>{{Post.PostedBy}}</td>
+      <td><a href="/edit/{{Post.PostId}}"><button class="btn btn-primary"> edit </button></a></td>
+      <td><a href="/delete/{{Post.PostId}}"><button  class="btn btn-danger "> delete  </button></a></td>
+     
+    
+    </tr> {% endfor %}
+  </tbody>
+</table>
+
+
+</div>
+{% endblock%}
