@@ -9,8 +9,9 @@ import os
 from werkzeug.utils import secure_filename  
 app = Flask(__name__)
 app.secret_key='secretkey'
-app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:@localhost/compscsoc" 
-app.config['UPLOAD_FOLDER'] = "C:\\Users\\Bindal\\Desktop\\Flask\\CompSocBlog\\static\\img"
+#app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:@localhost/compscsoc"
+app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://testing:testing@123@localhost/compsocssc"
+#app.config['UPLOAD_FOLDER'] = "C:\\Users\\Bindal\\Desktop\\Flask\\CompSocBlog\\static\\img"
 
 db = SQLAlchemy(app) # INITIALIZE THE DATABASE
 
@@ -26,7 +27,7 @@ class Contacts(db.Model): # This Contact Class is for contact table
    
 
 class Posts(db.Model): # This Posts Class is for Posts table 
-    __tablename__='Posts'
+    __tablename__='posts'
     PostId = db.Column(db.Integer, primary_key=True)
     PostTitle = db.Column(db.String(80), nullable=False)
     PostContent = db.Column(db.String(500), nullable=False)
