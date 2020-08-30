@@ -15,7 +15,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://testing:testing@123@localhost/c
 
 db = SQLAlchemy(app) # INITIALIZE THE DATABASE
 
-
 class Contacts(db.Model): # This Contact Class is for contact table 
     __tablename__='contact'
     Qstnd = db.Column(db.Integer, primary_key=True)
@@ -36,78 +35,87 @@ class Posts(db.Model): # This Posts Class is for Posts table
     slug = db.Column(db.String(20), nullable=False)
     DT = db.Column(db.String(12), nullable=True)
 
+# nullable = false => SQL column NOT NULL
 
-# Default value of nullabe is True so We make it False where for unique it is True so We dont mention we need column in any field
-
-
+#redirects to main homepage of the society
 @app.route("/")
 def home():
+    #gets all the posts, filtered from 0 to 4, need to figure out how to add more pages
     posts=Posts.query.filter_by().all()[0:4]
     return render_template('index.html', Posts=posts)
 
-
+#leads to the about us section
 @app.route("/about")
 def about():
-   
     return render_template('about.html')
 
 
-
+#The contact us page
 @app.route("/contact", methods=['GET', 'POST'])
-
 def contact():
+    #checks Form submission
+    #Need to remember to escape characters before using
     if(request.method=='POST'):
-        # Add Entry To the database
         Name=request.form.get('Name')
         EmailId=request.form.get('Email')
         ContactNum=request.form.get('ContactNum')
         Msg=request.form.get('MSG')
 
-        entry = Contacts(Name=Name, EmailId=EmailId, PhoneNum=ContactNum, Msg=Msg, DT=datetime.now() )# Here lhs are from class attribute and rhs are if ke andar wale
+        entry = Contacts(
+            Name=Name, 
+            EmailId=EmailId, 
+            PhoneNum=ContactNum, 
+            Msg=Msg, 
+            DT=datetime.now()
+        )
+        #LHS from Class Contacts, RHS Values taken from form
         
         db.session.add(entry)
         db.session.commit()
-
-
-
     return render_template('contact.html')
 
-@app.route("/Uploader", methods=['GET', 'POST'])
-def Upload():
-    if ('Admin' in session and session['Admin']=="Compssc"): # Only Loggged In user can edit the post
-        if(request.method=='POST'):
-            FileComing=request.files['ImgF']
-            FileComing.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(FileComing.filename)))
-            return "Upload Complete"
-            
-
-
-
-
-@app.route("/Post/<string:post_slug>", methods=['GET'])
+# Handles Individual posts, gets by PostSlug
+@app.route("/post/<string:post_slug>", methods=['GET'])
 def post_route(post_slug):
     Post = Posts.query.filter_by(slug=post_slug).first()
     return render_template('post.html', Post=Post)
 
+#ADMIN PANEL SECTION BEGINS HERE
+#wondering whether to move these all to /dashboard/ to prevent rogue users accessing areas of the site
+#uploader section handles files
+@app.route("/dashboard/uploader", methods=['GET', 'POST'])
+def Upload():
+    # Only Loggged In user can upload files
+    if ('Admin' in session and session['Admin']=="Compssc"): 
+        if(request.method=='POST'):
+            FileComing=request.files['ImgF']
+            FileComing.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(FileComing.filename)))
+            return "Upload Complete"
+    else :
+        return redirect('/dashboard')
 
-@app.route("/delete/<string:PostId>", methods = ['GET', 'POST'])
+
+#delete section handles deleting files
+@app.route("/delete/<int:PostId>", methods = ['GET', 'POST'])
 def delete(PostId):
-    if ('Admin' in session and session['Admin']=="Compssc"): # Only Loggged In user can edit the post
+    # Only Loggged In user can delete files
+    if ('Admin' in session and session['Admin']=="Compssc"):
+        PostId = str(PostId) 
         post=Posts.query.filter_by(PostId=PostId).first()
         db.session.delete(post)
         db.session.commit()    
-    return redirect('/DashBoard')
+    return redirect('/dashboard')
 
-
-
-@app.route("/Logout")
+#logout section to handle logging out
+@app.route("/logout")
 def Logout():
     session.pop('Admin')
-    return redirect('/DashBoard')
+    return redirect('/dashboard')
 
-@app.route("/edit/<string:PostId>", methods = ['GET', 'POST'])
+@app.route("/dashboard/edit/<int:PostId>", methods = ['GET', 'POST'])
 def edit(PostId):
     if ('Admin' in session and session['Admin']=="Compssc"): # Only Loggged In user can edit the post
+        PostId = str(PostId) 
         if request.method == 'POST':
             PrevTitle=request.form.get('Title')
             PrevContent=request.form.get('Content')
@@ -129,33 +137,17 @@ def edit(PostId):
                 Post.Slug  = PrevSlug
                 Post.DT      = Dt
                 db.session.commit()
-                return redirect('/edit/'+PostId)
-    Post=Posts.query.filter_by(PostId=PostId).first()
-    
-    return render_template('edit.html',  Post=Post, PostId=PostId)
+                return redirect('/dashboard/edit/'+PostId)
+        #Post=Posts.query.filter_by(PostId=PostId).first()
+    else:
+        return redirect('/')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@app.route("/DashBoard", methods=['GET','POST'])
-def DashBoard():
+@app.route("/dashboard", methods=['GET','POST'])
+def dashboard():
 
     if ('Admin' in session and session['Admin']=="Compssc"):
         Post=Posts.query.all()
-        return render_template('AdminPanel.html', Posts=Post)
+        return render_template('adminpanel.html', Posts=Post)
 
     if (request.method=='POST'):
         UserName=request.form.get('UserName')
@@ -168,13 +160,13 @@ def DashBoard():
             session['Admin']=UserName
             Post=Posts.query.all()
 
-            return render_template('AdminPanel.html', Posts=Post)
+            return render_template('adminpanel.html', Posts=Post)
         else:
             return render_template('contact.html')
 
 
 
-    #    Ridirect To Admin Panel
+
     else:
         return render_template('SignUp.html')    
 

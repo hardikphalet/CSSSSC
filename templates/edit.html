@@ -3,7 +3,7 @@
 
 
 
-<header class="masthead" style="background-image: url(' {{ url_for('static', filename='img/Writer.jpg')}}'">
+<header class="masthead" style="background-image: url('{{ url_for('static', filename='img/Writer.jpg')}}')">
   <div class="overlay"></div>
   <div class="container">
     <div class="row">
@@ -20,19 +20,19 @@
     
 <div class="container">
 
-  <a href="/edit/0"><button class="btn btn-primary my-4 ">
-    DashBoard Home 
+  <a href="/dashboard/edit/0"><button class="btn btn-primary my-4 ">
+    Dashboard Home 
    </button> </a>
    
    
-   <a href="/Logout"><button class="btn btn-primary my-4" style="margin-left:48rem">
+   <a href="/logout"><button class="btn btn-primary my-4" style="margin-left:48rem">
      Logout
     </button> </a><hr>
 <!-- <table class="table table-dark my-4"> -->
 <h1> Add/Edit Post    
     
 
-    <form name="sentMessage" id="editForm" action="/edit/{{PostId}}" method="post" novalidate>
+    <form name="sentMessage" id="editForm" action="/dashboard/edit/{{PostId}}" method="post" novalidate>
         <div class="control-group">
           <div class="form-group floating-label-form-group controls">
             <label>Title </label>

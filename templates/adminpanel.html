@@ -3,7 +3,7 @@
 
 
 
-<header class="masthead" style="background-image: url(' {{ url_for('static', filename='img/Writer.jpg')}}'">
+<header class="masthead" style="background-image: url(' {{ url_for('static', filename='img/Writer.jpg')}}')">
   <div class="overlay"></div>
   <div class="container">
     <div class="row">
@@ -19,12 +19,12 @@
 
     
 <div class="container">
-  <a href="/edit/0"><button class="btn btn-primary my-4 ">
+  <a href="/dashboard/edit/0"><button class="btn btn-primary my-4 ">
  New Article 
 </button> </a>
 
 
-<a href="/Logout"><button class="btn btn-primary my-4" style="margin-left:51rem">
+<a href="/logout"><button class="btn btn-primary my-4" style="margin-left:51rem">
   Logout
  </button> </a>
 <h1 class="my-3"> Upload a file </h1> <hr>
@@ -51,7 +51,7 @@
       <th scope="row">{{Post.PostId}}</th>
       <td>{{Post.PostTitle}}</td>
       <td>{{Post.PostedBy}}</td>
-      <td><a href="/edit/{{Post.PostId}}"><button class="btn btn-primary"> edit </button></a></td>
+      <td><a href="/dashboard/edit/{{Post.PostId}}"><button class="btn btn-primary"> edit </button></a></td>
       <td><a href="/delete/{{Post.PostId}}"><button  class="btn btn-danger "> delete  </button></a></td>
      
     

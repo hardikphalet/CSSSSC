@@ -13,7 +13,7 @@ when I extend it to the layout it go to according to that template and where it 
 {% block body %}   
 
   <!-- Page Header -->
-<header class="masthead" style="background-image: url(' {{ url_for('static', filename='img/home-bg.jpg')}}'">
+<header class="masthead" style="background-image: url(' {{ url_for('static', filename='img/home-bg.jpg')}}')">
     <div class="overlay"></div>
     <div class="container">
       <div class="row">
@@ -45,21 +45,21 @@ for consistency I also take just 4 articles at a time and then pagination -->
 {%for Post in Posts%} 
         
 
-<a href="/Post/{{Post.Slug}}">      </a>
+<a href="/post/{{Post.Slug}}">      </a>
 
         <div class="post-preview">
-          <a href="Post/{{Post.slug}}">
+          <a href="post/{{Post.slug}}">
             
               <h2 class="post-title">
-                <li>              {{Post.PostTitle}}
+                <li>{{Post.PostTitle}}
              
             </h2>
           </a>
                     
-          <p class="post-meta">Posted by
-            <a href="#">Start Bootstrap</a>
-            on  {{Post.DT}}</p>
-        </div>{{Post.PostContent[0:50]}}....
+          <p class="post-meta">by
+            <a href="#">{{ Post.PostedBy }}</a>
+            on  {{ Post.DT }}</p>
+        </div>{{Post.PostContent[0:50]}}...
         <hr>
 
       {% endfor %}
