@@ -1,5 +1,5 @@
 
-from flask import Flask, render_template, request, session, redirect
+from flask import Flask, render_template, request, session, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 
 import json
@@ -41,7 +41,7 @@ class Posts(db.Model): # This Posts Class is for Posts table
 @app.route("/")
 def home():
     #gets all the posts, filtered from 0 to 4, need to figure out how to add more pages
-    posts=Posts.query.filter_by().all()[0:4]
+    posts=Posts.query.all()[0:4]
     return render_template('index.html', Posts=posts)
 
 #leads to the about us section
@@ -96,7 +96,7 @@ def Upload():
 
 
 #delete section handles deleting files
-@app.route("/delete/<int:PostId>", methods = ['GET', 'POST'])
+@app.route("/dashboard/delete/<int:PostId>", methods = ['GET', 'POST'])
 def delete(PostId):
     # Only Loggged In user can delete files
     if ('Admin' in session and session['Admin']=="Compssc"):
@@ -112,43 +112,69 @@ def Logout():
     session.pop('Admin')
     return redirect('/dashboard')
 
+#edit section to handle editing articles
+#<int:PostId> forces the get value to only be an integer, saving from XSS
 @app.route("/dashboard/edit/<int:PostId>", methods = ['GET', 'POST'])
 def edit(PostId):
-    if ('Admin' in session and session['Admin']=="Compssc"): # Only Loggged In user can edit the post
-        PostId = str(PostId) 
+     # Only Loggged In user can edit the post
+    if ('Admin' in session and session['Admin']=="Compssc"):
+        #converts the PostId to a string for use in queries
+        #Checks if form is submitted
         if request.method == 'POST':
+            #Values hold the intermediate values that are filled into the form
             PrevTitle=request.form.get('Title')
             PrevContent=request.form.get('Content')
             PrevSlug=request.form.get('Slug')
             PrevImg=request.form.get('ImageFile')    
             Author=request.form.get('WrittenBy')    
             Dt=datetime.now()
-
+            #section checks if the slug entered is a repeat value
+            # **IDEA: Generate the slug instead of asking the user to enter**
+            #Loop goes through each post in the Posts table
+            for post in Posts.query.all():
+                #Need to check if the new slug (PrevSlug) as a slug in a post that isn't the post being edited.
+                #using PostId as the verifier since PostId is the Primary Key of the table
+                # LOGIC:
+                # Post Ids match    and slugs match     > No Action
+                # Post Ids X match  and slugs match     > Error
+                # Post Ids match    and slugs X match   > No Action
+                # Post Ids X match  and slugs X match   > No Action 
+                if post.PostId != PostId and PrevSlug == post.slug:
+                    #flash method passes the error to the redirected page
+                    flash("Another post exists with the same slug, please modify")
+                    return redirect('/dashboard/edit/'+str(PostId))
+            #for creating a new post, basically uses the same page
+            PostId = str(PostId) 
             if PostId=='0':
                 Post = Posts(PostTitle=PrevTitle, PostContent=PrevContent, ImgFile=PrevImg, PostedBy=Author, slug=PrevSlug, DT=Dt)
                 db.session.add(Post)
                 db.session.commit()
+                #if the post already exists
             else:
                 Post=Posts.query.filter_by(PostId=PostId).first()
-                Post.PostTitle     = PrevTitle                                      
-                Post.PostContent  = PrevContent
-                Post.PostedBy  = Author
-                Post.ImgFile  = PrevImg
-                Post.Slug  = PrevSlug
-                Post.DT      = Dt
+                Post.PostTitle  = PrevTitle
+                #Need to parse through all the text, make sure no scripts are entered or things don't break                                      
+                Post.PostContent= PrevContent
+                Post.PostedBy   = Author
+                Post.ImgFile    = PrevImg
+                Post.slug       = PrevSlug
+                Post.DT         = Dt
                 db.session.commit()
                 return redirect('/dashboard/edit/'+PostId)
-        #Post=Posts.query.filter_by(PostId=PostId).first()
     else:
         return redirect('/')
+    #fixes the broken edit page, erroneously removed second line > page didn't render
+    Post=Posts.query.filter_by(PostId=PostId).first()
+    return render_template('edit.html',  Post=Post, PostId=PostId)
 
+#handles generating the dashboard
 @app.route("/dashboard", methods=['GET','POST'])
 def dashboard():
-
+    #checks if user already logged in
     if ('Admin' in session and session['Admin']=="Compssc"):
         Post=Posts.query.all()
         return render_template('adminpanel.html', Posts=Post)
-
+    #Checks if login form submitted
     if (request.method=='POST'):
         UserName=request.form.get('UserName')
         Password=request.form.get('Password')
@@ -159,21 +185,13 @@ def dashboard():
             # Set The Session Variable
             session['Admin']=UserName
             Post=Posts.query.all()
-
             return render_template('adminpanel.html', Posts=Post)
         else:
-            return render_template('contact.html')
-
-
-
-
+            # return render_template('contact.html')
+            # might be more helpful to just keep redirecting them to the dashboard?
+            return redirect('/dashboard')
     else:
         return render_template('SignUp.html')    
-
-
-    
-
-
 
 app.run(debug=True)
 
