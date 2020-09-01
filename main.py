@@ -1,7 +1,7 @@
 
 from flask import Flask, render_template, request, session, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
-
+import re
 import json
 from datetime import datetime
 import os
@@ -77,11 +77,15 @@ def contact():
 # Handles Individual posts, gets by PostSlug
 @app.route("/post/<string:post_slug>", methods=['GET'])
 def post_route(post_slug):
-    Post = Posts.query.filter_by(slug=post_slug).first()
-    # splits up the content by para so that it's easier to output in the template file. Then resets Post.PostContent to the generated list of paras
-    contenttobreak = Post.PostContent.split('\n')
-    Post.PostContent = contenttobreak
-    return render_template('post.html', Post=Post)
+    pattern = "[A-Za-z0-9+-]"
+    if re.match(pattern, post_slug):
+        Post = Posts.query.filter_by(slug=post_slug).first()
+        # splits up the content by para so that it's easier to output in the template file. Then resets Post.PostContent to the generated list of paras
+        contenttobreak = Post.PostContent.split('\n')
+        Post.PostContent = contenttobreak
+        return render_template('post.html', Post=Post)
+    else :
+        return redirect('/')
 
 #ADMIN PANEL SECTION BEGINS HERE
 #wondering whether to move these all to /dashboard/ to prevent rogue users accessing areas of the site
