@@ -77,15 +77,18 @@ def contact():
 # Handles Individual posts, gets by PostSlug
 @app.route("/post/<string:post_slug>", methods=['GET'])
 def post_route(post_slug):
-    pattern = "[A-Za-z0-9+-]"
-    if re.match(pattern, post_slug):
+    #checks that the post slug contains no characters other than alphanumeric ones and '-'
+    # \W = any character not [A-Za-z0-9_]
+    match = re.search(r"\W", post_slug)
+    #if an unknown character found, redirect to homepage, else render post template with slug as Post.Slug
+    if match:
+        return redirect('/')
+    else :
         Post = Posts.query.filter_by(slug=post_slug).first()
         # splits up the content by para so that it's easier to output in the template file. Then resets Post.PostContent to the generated list of paras
         contenttobreak = Post.PostContent.split('\n')
         Post.PostContent = contenttobreak
         return render_template('post.html', Post=Post)
-    else :
-        return redirect('/')
 
 #ADMIN PANEL SECTION BEGINS HERE
 #wondering whether to move these all to /dashboard/ to prevent rogue users accessing areas of the site
@@ -150,6 +153,12 @@ def edit(PostId):
                     #flash method passes the error to the redirected page
                     flash("Another post exists with the same slug, please modify")
                     return redirect('/dashboard/edit/'+str(PostId))
+            #same pattern matching as in post URL, checking to make sure no special characters are allowed in the slug
+            match = re.search(r"\W", PrevSlug)
+            #if character found, then flash error message
+            if match:
+                flash("Cannot use any character other than A-Z, a-z, 0-9 and _ in the slug")
+                return redirect('/dashboard/edit/'+str(PostId))
             #for creating a new post, basically uses the same page
             PostId = str(PostId) 
             if PostId=='0':
@@ -173,10 +182,6 @@ def edit(PostId):
     #fixes the broken edit page, erroneously removed second line > page didn't render
     Post=Posts.query.filter_by(PostId=PostId).first()
     return render_template('edit.html',  Post=Post, PostId=PostId)
-
-#function to sanitize the text depending on the context of where the text is being submitted
-def sanitizeText(unsanitizedText):
-    pass
 
 #handles generating the dashboard
 @app.route("/dashboard", methods=['GET','POST'])
