@@ -145,6 +145,7 @@ def Logout():
 def edit(PostId):
     
     if ('Admin' in session and session['Admin']=="Compssc"): # Only Loggged In user can edit the post
+        ChErr=0
         if request.method == 'POST':
             PrevTitle=request.form.get('Title')
             PrevContent=request.form.get('Content')
@@ -167,15 +168,13 @@ def edit(PostId):
                 Post.Slug  = PrevSlug
                 Post.DT      = Dt
                 
-                if(db.session.commit()):
-                    flash("You have edited a Article,successfully ","success")
-                else:
-                    k=type(db.session.commit())
-                    flash(k,"danger")
+                db.session.commit()
+                flash("You have edited a Article,successfully ","success")
     
                 return redirect('/edit/'+PostId)
+                
     Post=Posts.query.filter_by(PostId=PostId).first()
-    return render_template('edit.html',  Post=Post, PostId=PostId,)
+    return render_template('edit.html',  Post=Post, PostId=PostId)
 
 
 
@@ -213,7 +212,8 @@ def DashBoard():
 
             return render_template('AdminPanel.html', Posts=Post)
         else:
-            return render_template('contact.html')
+            flash("Your UserName and Password didn't match","danger")
+            return render_template('SignUp.html')
 
 
 
