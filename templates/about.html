@@ -1,4 +1,5 @@
 
+
 {% extends "layout.html" %}  <!-- This line is for the layout.
 
   we fetch the header from layout.html so extends it to that 
@@ -13,29 +14,123 @@
 
 
 <!-- Page Header -->
-  <header class="masthead" style="background-image: url(' {{ url_for('static', filename='img/about-bg.jpg')}}'">
-    <div class="overlay"></div>
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-8 col-md-10 mx-auto">
-          <div class="page-heading">
-            <h1>About Me</h1>
-            <span class="subheading">This is what I do.</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <!-- Main Content -->
+<header class="masthead" style="background-image: url(' {{ url_for('static', filename='img/about-bg.jpg')}}')">
+  <div class="overlay"></div>
   <div class="container">
     <div class="row">
       <div class="col-lg-8 col-md-10 mx-auto">
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Saepe nostrum ullam eveniet pariatur voluptates odit, fuga atque ea nobis sit soluta odio, adipisci quas excepturi maxime quae totam ducimus consectetur?</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius praesentium recusandae illo eaque architecto error, repellendus iusto reprehenderit, doloribus, minus sunt. Numquam at quae voluptatum in officia voluptas voluptatibus, minus!</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut consequuntur magnam, excepturi aliquid ex itaque esse est vero natus quae optio aperiam soluta voluptatibus corporis atque iste neque sit tempora!</p>
+        <div class="page-heading">
+          <h1>About Me</h1>
+          <span class="subheading">This is what I do.</span>
+        </div>
       </div>
     </div>
   </div>
+</header>
 
-{% endblock%}
+<!-- Main Content -->
+<!-- <div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-md-10 mx-auto">
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Saepe nostrum ullam eveniet pariatur voluptates odit, fuga atque ea nobis sit soluta odio, adipisci quas excepturi maxime quae totam ducimus consectetur?</p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius praesentium recusandae illo eaque architecto error, repellendus iusto reprehenderit, doloribus, minus sunt. Numquam at quae voluptatum in officia voluptas voluptatibus, minus!</p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut consequuntur magnam, excepturi aliquid ex itaque esse est vero natus quae optio aperiam soluta voluptatibus corporis atque iste neque sit tempora!</p>
+    </div>
+  </div>
+</div> -->
+
+<!-- <img src="{{url_for('static', filename='img/qm.jpg')}}" > -->
+
+<div class="row">
+<div class="col-md-4">
+  <div class="card mt-3 mb-5 mx-5" style="width: 18rem; height: 38rem">
+      <img class="card-img-top" src="{{url_for('static', filename='img/me.jpg')}}" height="236px">
+      <div class="card-body my-3">
+          <h3 class="card-title"> <a href="ThreadsList.php? Catid='. $ID .'">Harsh Bindal </a> </h3>
+          <small> Programming Head and Event Management Team  </small>
+          <p class="card-text">
+          Lore Lorem ipsum dolor 
+          em necessitatibus nesciunt sequi explicabo repellendus? Quos tempore pariatur quae hic. Nulla, quae?</p>
+    
+      </div>
+  </div>
+  
+</div>
+
+<div class="col-md-4">
+  <div class="card mt-3 mb-5 mx-5" style="width: 18rem; height: 38rem">
+      <img class="card-img-top" src="{{url_for('static', filename='img/me.jpg')}}" height="236px">
+      <div class="card-body my-3">
+          <h3 class="card-title"> <a href="ThreadsList.php? Catid='. $ID .'">Harsh Bindal </a> </h3>
+          <small> Programming Head and Event Management Team  </small>
+          <p class="card-text">
+          Lore Lorem ipsum dolor 
+          em necessitatibus nesciunt sequi explicabo repellendus? Quos tempore pariatur quae hic. Nulla, quae?</p>
+    
+      </div>
+  </div>
+  
+</div>
+<div class="col-md-4">
+  <div class="card mt-3 mb-5 mx-5" style="width: 18rem; height: 38rem">
+      <img class="card-img-top" src="{{url_for('static', filename='img/me.jpg')}}" height="236px">
+      <div class="card-body my-3">
+          <h3 class="card-title"> <a href="ThreadsList.php? Catid='. $ID .'">Harsh Bindal </a> </h3>
+          <small> Programming Head and Event Management Team  </small>
+          <p class="card-text">
+          Lore Lorem ipsum dolor 
+          em necessitatibus nesciunt sequi explicabo repellendus? Quos tempore pariatur quae hic. Nulla, quae?</p>
+    
+      </div>
+  </div>
+  
+</div>
+<div class="col-md-4">
+  <div class="card mt-3 mb-5 mx-5" style="width: 18rem; height: 38rem">
+      <img class="card-img-top" src="{{url_for('static', filename='img/me.jpg')}}" height="236px">
+      <div class="card-body my-3">
+          <h3 class="card-title"> <a href="ThreadsList.php? Catid='. $ID .'">Harsh Bindal </a> </h3>
+          <small> Programming Head and Event Management Team  </small>
+          <p class="card-text">
+          Lore Lorem ipsum dolor 
+          em necessitatibus nesciunt sequi explicabo repellendus? Quos tempore pariatur quae hic. Nulla, quae?</p>
+    
+      </div>
+  </div>
+  
+</div>
+  
+</div><div class="col-md-4">
+  <div class="card mt-1 mb-5 mx-5" style="width: 18rem; height: 38rem">
+      <img class="card-img-top" src="{{url_for('static', filename='img/me.jpg')}}" height="236px">
+      <div class="card-body my-3">
+          <h5 class="card-title"> <a href="ThreadsList.php? Catid='. $ID .'">Programming Head </a> </h5>
+          <p class="card-text">
+          Lore Lorem ipsum dolor 
+          em necessitatibus nesciunt sequi explicabo repellendus? Quos tempore pariatur quae hic. Nulla, quae?</p>
+        <h3>  <a href="Threadslist.php? Catid='. $ID .'"  > Harsh Bindal </a></h3>
+      </div>
+  </div>
+  
+</div><div class="col-md-4">
+  <div class="card mt-3 mb-5 mx-5" style="width: 18rem; height: 38rem">
+      <img class="card-img-top" src="{{url_for('static', filename='img/me.jpg')}}" height="236px">
+      <div class="card-body my-3">
+          <h5 class="card-title"> <a href="ThreadsList.php? Catid='. $ID .'">Programming Head </a> </h5>
+          <p class="card-text">
+          Lore Lorem ipsum dolor 
+          em necessitatibus nesciunt sequi explicabo repellendus? Quos tempore pariatur quae hic. Nulla, quae?</p>
+        <h3>  <a href="Threadslist.php? Catid='. $ID .'"  > Harsh Bindal </a></h3>
+      </div>
+  </div>
+  
+</div>
+
+
+
+
+
+
+</div>
+
+  {% endblock %}

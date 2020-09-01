@@ -1,5 +1,5 @@
 
-from flask import Flask, render_template, request, session, redirect
+from flask import Flask, render_template, request, session, redirect, url_for,flash
 from flask_sqlalchemy import SQLAlchemy
 
 import math
@@ -42,7 +42,7 @@ class Posts(db.Model): # This Posts Class is for Posts table
 @app.route("/")
 def home():
     posts=Posts.query.filter_by().all()#[0:4]
-    
+    # flash("YOUR Issue have been registerd","success")
     Len=len(posts)
     last=math.ceil(Len/4)
     
@@ -99,6 +99,7 @@ def contact():
         db.session.commit()
 
 
+        flash("Thanks, For Contacting, Get back to you soon!!  ","success")
 
     return render_template('contact.html')
 
@@ -107,8 +108,13 @@ def Upload():
     if ('Admin' in session and session['Admin']=="Compssc"): # Only Loggged In user can edit the post
         if(request.method=='POST'):
             FileComing=request.files['ImgF']
+
             FileComing.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(FileComing.filename)))
-            return "Upload Complete"
+            flash("Your Image added Successfully  ","success")
+
+        else:
+                flash("Your File can't be upload try again ","danger")
+        return redirect('/DashBoard')
             
 
 
@@ -137,6 +143,7 @@ def Logout():
 
 @app.route("/edit/<string:PostId>", methods = ['GET', 'POST'])
 def edit(PostId):
+    
     if ('Admin' in session and session['Admin']=="Compssc"): # Only Loggged In user can edit the post
         if request.method == 'POST':
             PrevTitle=request.form.get('Title')
@@ -145,11 +152,12 @@ def edit(PostId):
             PrevImg=request.form.get('ImageFile')    
             Author=request.form.get('WrittenBy')    
             Dt=datetime.now()
-
+            
             if PostId=='0':
                 Post = Posts(PostTitle=PrevTitle, PostContent=PrevContent, ImgFile=PrevImg, PostedBy=Author, slug=PrevSlug, DT=Dt)
                 db.session.add(Post)
                 db.session.commit()
+                
             else:
                 Post=Posts.query.filter_by(PostId=PostId).first()
                 Post.PostTitle     = PrevTitle                                      
@@ -158,11 +166,16 @@ def edit(PostId):
                 Post.ImgFile  = PrevImg
                 Post.Slug  = PrevSlug
                 Post.DT      = Dt
-                db.session.commit()
+                
+                if(db.session.commit()):
+                    flash("You have edited a Article,successfully ","success")
+                else:
+                    k=type(db.session.commit())
+                    flash(k,"danger")
+    
                 return redirect('/edit/'+PostId)
     Post=Posts.query.filter_by(PostId=PostId).first()
-    
-    return render_template('edit.html',  Post=Post, PostId=PostId)
+    return render_template('edit.html',  Post=Post, PostId=PostId,)
 
 
 
