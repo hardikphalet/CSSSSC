@@ -14,24 +14,31 @@
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-
+    
     <!-- Custom styles for this template -->
     <link href="{{url_for('static', filename='css/signin.css')}}" rel="stylesheet">
   </head>
-
+  
   <body class="text-center">
     <form class="form-signin" action="/dashboard" method="post">
       <img class="mb-2" src="{{ url_for('static', filename='img/Logo.png')}}" alt="LOGO" width="300" height="200">
       <h1 class="h3 mb-4 font-weight-normal">Admin Login</h1>
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for message in messages %}
+            <p class='mt-5 mb-4'>{{message}}</p>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
       <label for="UserName" class="sr-only">UserName </label>
       <input type="text" name="UserName" id="UserName" class="form-control" placeholder="UserName" required autofocus>
       <label for="Password" class="sr-only">Password</label>
       <input type="password" id="Password" Name="Password" class="form-control" placeholder="Password" required>
       <div class="checkbox mb-5">
-       
+        
       </div>
       <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
       <p class="mt-5 mb-3 text-muted">&copy; Computer Science Society SSC</p>
     </form>
   </body>
-</html>
+  </html>

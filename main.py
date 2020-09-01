@@ -205,6 +205,8 @@ def dashboard():
         else:
             # return render_template('contact.html')
             # might be more helpful to just keep redirecting them to the dashboard?
+            # return redirect('/dashboard')
+            flash("Credentials incorrect")
             return redirect('/dashboard')
     else:
         return render_template('SignUp.html')    
