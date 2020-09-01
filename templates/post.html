@@ -37,9 +37,11 @@
     <div class="container">
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
-          {{Post.PostContent}}
-
-          </div>
+          <!-- Displays each paragraph in postcontent as a separate paragraph wrapped with HTML p tags -->
+          {% for para in Post.PostContent %}
+            <p>{{para}}</p>
+          {% endfor %}
+        </div>
       </div>
     </div>
   </article>

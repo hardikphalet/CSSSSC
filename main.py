@@ -78,6 +78,9 @@ def contact():
 @app.route("/post/<string:post_slug>", methods=['GET'])
 def post_route(post_slug):
     Post = Posts.query.filter_by(slug=post_slug).first()
+    # splits up the content by para so that it's easier to output in the template file. Then resets Post.PostContent to the generated list of paras
+    contenttobreak = Post.PostContent.split('\n')
+    Post.PostContent = contenttobreak
     return render_template('post.html', Post=Post)
 
 #ADMIN PANEL SECTION BEGINS HERE
@@ -166,6 +169,10 @@ def edit(PostId):
     #fixes the broken edit page, erroneously removed second line > page didn't render
     Post=Posts.query.filter_by(PostId=PostId).first()
     return render_template('edit.html',  Post=Post, PostId=PostId)
+
+#function to sanitize the text depending on the context of where the text is being submitted
+def sanitizeText(unsanitizedText):
+    pass
 
 #handles generating the dashboard
 @app.route("/dashboard", methods=['GET','POST'])
