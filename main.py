@@ -212,7 +212,7 @@ def DashBoard():
 
             return render_template('AdminPanel.html', Posts=Post)
         else:
-            flash("Your UserName and Password didn't match","danger")
+            # flash("Your UserName and Password didn't match","danger")
             return render_template('SignUp.html')
 
 
