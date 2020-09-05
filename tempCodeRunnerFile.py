@@ -1,1 +1,1 @@
-/DashBoard
+/dashboard

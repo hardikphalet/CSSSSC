@@ -1,7 +1,7 @@
 
 from flask import Flask, render_template, request, session, redirect, url_for,flash
 from flask_sqlalchemy import SQLAlchemy
-import re
+from re import search
 import math
 from datetime import datetime
 import os
@@ -9,8 +9,9 @@ import os
 from werkzeug.utils import secure_filename  
 app = Flask(__name__)
 app.secret_key='secretkey'
-app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:@localhost/compscsoc" 
-app.config['UPLOAD_FOLDER'] = "C:\\Users\\SSC\\Desktop\\Flask\\CompSocBlog\\static\\img"
+#app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:@localhost/compscsoc" 
+app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://testing:testing@123@localhost/compsocssc"
+# app.config['UPLOAD_FOLDER'] = "C:\\Users\\SSC\\Desktop\\Flask\\CompSocBlog\\static\\img"
 
 db = SQLAlchemy(app) # INITIALIZE THE DATABASE
 
@@ -26,7 +27,7 @@ class Contacts(db.Model): # This Contact Class is for contact table
    
 
 class Posts(db.Model): # This Posts Class is for Posts table 
-    __tablename__='Posts'
+    __tablename__='posts' #Always better to assume strict checking of SQL
     PostId = db.Column(db.Integer, primary_key=True)
     PostTitle = db.Column(db.String(80), nullable=False)
     PostContent = db.Column(db.String(500), nullable=False)
@@ -35,44 +36,34 @@ class Posts(db.Model): # This Posts Class is for Posts table
     slug = db.Column(db.String(20), nullable=False)
     DT = db.Column(db.String(12), nullable=True)
 
-
 # Default value of nullabe is True 
 # Default value of unique is False 
 # nullable = false => SQL column NOT NULL
 
 
-# Ridrect to the homepage
-
-
-
-
-
-
-
-
-
-
+# Redirect to the homepage of our website
 @app.route("/")
 def home():
+    #gets all the posts
     posts=Posts.query.all()  
+    #calculates the number of posts
     Len=len(posts)
+    #finds the number of pages we'll have (rounding up Len/4)
     last=math.ceil(Len/4)
-    
-
-
+    #checks the value of the Page Variable being passed through GET in the URL
     Page=(request.args.get('Page'))
-
-
-
+    #Checks whether the value is not numeric, indicating first page
     if(not str(Page).isnumeric()):
         Page=1
-        
+    #makes sure to convert the value of the GET into int
+    #Possible TypeError arising here
     Page=int(Page)
+    #Slices our dictionary of posts into the posts for this current page
     posts= posts[int((Page-1)*4):int((Page-1)*4+4)]
-
-
+    #Conditions for the previous and next pages
     if (Page==1):
         Previous='#'
+        #makes sure to recast page to a string for use in the URL
         Next="/?Page="+str(Page+1)
     elif (Page==last):
         Next='#'
@@ -80,36 +71,22 @@ def home():
     else:
         Previous="/?Page="+str(Page-1)
         Next="/?Page="+str(Page+1)
-
-
-
-
+    #Don't really need to call this again
+    #Might be better to change the pervious operation we do on posts to being posts1 or page_posts
     posts=Posts.query.filter_by().all()[int((Page-1)*4):int((Page-1)*4+4)]
+    #renders template for homepage
     return render_template('index.html', Posts=posts, Prev=Previous, Next=Next )
-
-
-
-
-
-
-
-
-
-
-
 
 # Leads to About us section
 @app.route("/about")
 def about():
-   
     return render_template('about.html')
 
-
-
+# Leads to the contact us page
 @app.route("/contact", methods=['GET', 'POST'])
-
 def contact():
     #checks Form submission
+    #Need to remember to escape all the values before finally implementing, though flask might alread do that for us
     if(request.method=='POST'):
         # Add Entry To the database
         Name=request.form.get('Name')
@@ -119,58 +96,25 @@ def contact():
 
         entry = Contacts(
             Name=Name,
-             EmailId=EmailId,
-              PhoneNum=ContactNum,
-               Msg=Msg, 
-               DT=datetime.now() )# #LHS from Class Contacts, RHS Values taken from form
-        
+            EmailId=EmailId,
+            PhoneNum=ContactNum,
+            Msg=Msg, 
+            DT=datetime.now()
+        )
+        #LHS from Class Contacts, RHS Values taken from form 
         db.session.add(entry)
         db.session.commit()
-
-
+        # Adds a success message, to be flashed in contact.html when rendered
         flash("Thanks, For Contacting, Get back to you soon!!  ","success")
 
     return render_template('contact.html')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-@app.route("/Uploader", methods=['GET', 'POST'])
-def Upload():
-    if ('Admin' in session and session['Admin']=="Compssc"): # Only Loggged In user can edit the post
-        if(request.method=='POST'):
-            FileComing=request.files['ImgF']
-
-            FileComing.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(FileComing.filename)))
-            flash("Your Image added Successfully  ","success")
-
-        else:
-                flash("Your File can't be upload try again ","danger")
-        return redirect('/DashBoard')
-            
-
-
-
-
-
-
-
-
+#handles individual post pages, by the post slug set
 @app.route("/Post/<string:post_slug>", methods=['GET'])
 def post_route(post_slug):
      #checks that the post slug contains no characters other than alphanumeric ones and '-'
     # \W = any character not [A-Za-z0-9_]
-    match = re.search(r"\W", post_slug)
+    match = search(r"\W", post_slug)
     #if an unknown character found, redirect to homepage, else render post template with slug as Post.Slug
     if match:
         return redirect('/')
@@ -180,44 +124,61 @@ def post_route(post_slug):
         contenttobreak = Post.PostContent.split('\n')
         Post.PostContent = contenttobreak
         return render_template('post.html', Post=Post)
-    
 
+#ADMIN PANEL SECTION BEGINS HERE    
+#wondering whether to move these all to /dashboard/ to prevent rogue users accessing areas of the site
+#uploader section handles the uploading of files
+#Also converting all of the naming to either camelCase (first letter of word small, otherFirstLettersCapitalized)
+@app.route("/Uploader", methods=['GET', 'POST'])
+def Upload():
+    #might need to add more validation here, rogue users may still be able to view the form
+     # Only Loggged In user can edit the post
+    if ('Admin' in session and session['Admin']=="Compssc"):
+        #checks if form containing the file is submitted
+        if(request.method=='POST'):
+            FileComing=request.files['ImgF']
+            #save the file in the path given in the UPLOAD FOLDER VARIABLE  at line 14/15
+            FileComing.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(FileComing.filename)))
+            flash("Your Image added Successfully  ","success")
+            # Might need to add more validation here, can see this condition failing in multiple ways
+        else:
+            flash("Your File can't be upload try again ","danger")
+        return redirect('/dashboard')
 
-
-@app.route("/delete/<string:PostId>", methods = ['GET', 'POST'])
+#making sure that the value passed is only an int, preventing scripts being run
+#delete section handles deleting of files
+@app.route("/delete/<int:PostId>", methods = ['GET', 'POST'])
 def delete(PostId):
-    if ('Admin' in session and session['Admin']=="Compssc"): # Only Loggged In user can edit the post
+    # Only Loggged In user can edit the post
+    if ('Admin' in session and session['Admin']=="Compssc"): 
+        PostId = str(PostId)
         post=Posts.query.filter_by(PostId=PostId).first()
         db.session.delete(post)
         db.session.commit()    
-    return redirect('/DashBoard')
+    return redirect('/dashboard')
 
-
-
-
-@app.route("/Logout")
+#Logout section handles logging out
+@app.route("/logout")
 def Logout():
     session.pop('Admin')
-    return redirect('/DashBoard')
+    return redirect('/dashboard')
 
-
-
-
-
-@app.route("/edit/<string:PostId>", methods = ['GET', 'POST'])
+#edit section handles editing/creating articles
+#<int:PostId> forces the get value to only be an integer, saving from XSS
+@app.route("/edit/<int:PostId>", methods = ['GET', 'POST'])
 def edit(PostId):
-    
-    if ('Admin' in session and session['Admin']=="Compssc"): # Only Loggged In user can edit the post
-
+    # Only Loggged In user can edit the post
+    if ('Admin' in session and session['Admin']=="Compssc"):
+        #Checks if form is submitted
         if request.method == 'POST':
+            #Vars hold intermediate values that are filled into the form
             PrevTitle=request.form.get('Title')
             PrevContent=request.form.get('Content')
             PrevSlug=request.form.get('Slug')
             PrevImg=request.form.get('ImageFile')    
             Author=request.form.get('WrittenBy')    
             Dt=datetime.now()
-
-             #section checks if the slug entered is a repeat value
+            #section checks if the slug entered is a repeat value
             # **IDEA: Generate the slug instead of asking the user to enter**
             #Loop goes through each post in the Posts table
             for post in Posts.query.all():
@@ -234,62 +195,45 @@ def edit(PostId):
                     return redirect('/edit/'+str(PostId))
             #for creating a new post, basically uses the same page
             #same pattern matching as in post URL, checking to make sure no special characters are allowed in the slug
-            match = re.search(r"\W", PrevSlug)
+            match = search(r"\W", PrevSlug)
             #if character found, then flash error message
             if match:
                 flash("Cannot use any character other than A-Z, a-z, 0-9 and _ in the slug")
                 return redirect('/edit/'+str(PostId))
             PostId = str(PostId) 
             
+            # creates a new post, using the same edit page 
             if PostId=='0':
                 Post = Posts(PostTitle=PrevTitle, PostContent=PrevContent, ImgFile=PrevImg, PostedBy=Author, slug=PrevSlug, DT=Dt)
                 db.session.add(Post)
                 db.session.commit()
-
-
-                # 0 is for add new article and else condition for edit
-                
+                #If the post already exists in the database
             else:
                 Post=Posts.query.filter_by(PostId=PostId).first()
-                Post.PostTitle     = PrevTitle                                      
-                Post.PostContent  = PrevContent
-                Post.PostedBy  = Author
-                Post.ImgFile  = PrevImg
-                Post.slug  = PrevSlug
-                Post.DT      = Dt
+                Post.PostTitle  = PrevTitle
+                Post.PostContent= PrevContent
+                Post.PostedBy   = Author
+                Post.ImgFile    = PrevImg
+                Post.slug       = PrevSlug
+                Post.DT         = Dt
                 
                 db.session.commit()
                 flash("You have edited a Article,successfully ","success")
     
                 return redirect('/edit/'+PostId)
-        # else:
-        #     return redirect('/')        
+        else:
+            return redirect('/')        
     Post=Posts.query.filter_by(PostId=PostId).first()
     return render_template('edit.html',  Post=Post, PostId=PostId)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@app.route("/DashBoard", methods=['GET','POST'])
-def DashBoard():
+#section handles generating the dashboard
+@app.route("/dashboard", methods=['GET','POST'])
+def dashboard():
  #checks if user already logged in
     if ('Admin' in session and session['Admin']=="Compssc"):
         Post=Posts.query.all()
-        return render_template('AdminPanel.html', Posts=Post)
- #Checks if login form submitted
+        return render_template('adminPanel.html', Posts=Post)
+    #Checks if login form submitted
     if (request.method=='POST'):
         UserName=request.form.get('UserName')
         Password=request.form.get('Password')
@@ -301,21 +245,13 @@ def DashBoard():
             session['Admin']=UserName
             Post=Posts.query.all()
 
-            return render_template('AdminPanel.html', Posts=Post)
+            return render_template('adminPanel.html', Posts=Post)
         else:
             # flash("Your UserName and Password didn't match","danger")
-            return render_template('SignUp.html')
-
-
-
+            return render_template('signUp.html')
     #    Ridirect To Admin Panel
     else:
-        return render_template('SignUp.html')    
-
-
-    
-
-
+        return render_template('signUp.html')    
 
 app.run(debug=True)
 
