@@ -15,7 +15,7 @@ when I extend it to the layout it go to according to that template and where it 
 {% block body %}   
 
   <!-- Page Header -->
-<header class="masthead mb-0" style="background-image: url(' {{ url_for('static', filename='img/home-bg.jpg')}}')">
+<header class="masthead mb-0" style="background-image: url(' {{ url_for('static', filename='img/home-bg.jpg')}}');">
     <div class="overlay"></div>
     <div class="container">
       <div class="row">
@@ -51,7 +51,7 @@ for consistency I also take just 4 articles at a time and then pagination -->
 <a href="/post/{{Post.Slug}}">      </a>
 
         <div class="post-preview">
-          <a href="Post/{{Post.slug}}">
+          <a href="post/{{Post.slug}}">
             
               <h2 class="post-title">
                 <li>              {{Post.PostTitle}}

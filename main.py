@@ -6,7 +6,8 @@ import math
 from datetime import datetime
 import os
 # from werkzeug import secure_filename 
-from werkzeug.utils import secure_filename  
+from werkzeug.utils import secure_filename 
+from werkzeug.exceptions import RequestEntityTooLarge 
 app = Flask(__name__)
 app.secret_key='secretkey'
 #app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:@localhost/compscsoc" 
@@ -17,6 +18,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://testing:testing@123@localhost/c
 app.config['UPLOAD_FOLDER'] = './static/img'
 #Popular Image file extensions, can be supplemented later on
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff' }
+#sets the maximum file size that can be uploaded to 10MB
+app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
 
 db = SQLAlchemy(app) # INITIALIZE THE DATABASE
 
@@ -134,6 +137,13 @@ def post_route(post_slug):
 #wondering whether to move these all to /dashboard/ to prevent rogue users accessing areas of the site
 #uploader section handles the uploading of files
 #Also converting all of the naming to either camelCase (first letter of word small, otherFirstLettersCapitalized)
+
+#checking file extension to prevent loading malware onto the site
+#using template provided by the Flask Project documentation
+def allowed_file(filename):
+    #checks that the file has an extension, and that the extension is allowed
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 @app.route("/dashboard/uploader", methods=['GET', 'POST'])
 def Upload():
     #might need to add more validation here, rogue users may still be able to view the form
@@ -141,14 +151,38 @@ def Upload():
     if ('Admin' in session and session['Admin']=="Compssc"):
         #checks if form containing the file is submitted
         if(request.method=='POST'):
+            #checks whether a file has been selected for upload or not
+            if 'ImgF' not in request.files:
+                flash("No file uploaded", "danger")
+                return redirect('/dashboard')
+
             FileComing=request.files['ImgF']
-            #save the file in the path given in the UPLOAD FOLDER VARIABLE  at line 14/15
-            FileComing.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(FileComing.filename)))
-            flash("Your Image added Successfully  ","success")
-            # Might need to add more validation here, can see this condition failing in multiple ways
-        else:
-            flash("Your File can't be upload try again ","danger")
+            #Checks to see if filename not blank
+            if FileComing.filename == '':
+                flash("No selected file for upload", "danger")
+                return redirect('/dashboard')
+
+            if FileComing and allowed_file(FileComing.filename):
+                #save the file in the path given in the UPLOAD FOLDER VARIABLE  at line 14/15
+                try: 
+                    FileComing.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(FileComing.filename)))
+                    flash("Your Image added Successfully  ","success")
+                except RequestEntityTooLarge:
+                    flash("Your file is too big. Try a smaller file (Max 10MB limit).","danger")
+                    pass
+                return redirect('/dashboard')
+            else:
+                flash("Your file is of an invalid format. Try again, with a different format. ","danger")
+                return redirect('/dashboard')
+    else:
         return redirect('/dashboard')
+
+#Handles a RequestEntityTooLarge error
+@app.errorhandler(413)
+@app.errorhandler(RequestEntityTooLarge)
+def redirect_to_dashboard(e):
+    flash("Your file is too big. Try a smaller file (Max 10MB limit).", "danger")
+    return redirect('/dashboard')
 
 #making sure that the value passed is only an int, preventing scripts being run
 #delete section handles deleting of files
