@@ -12,6 +12,11 @@ app.secret_key='secretkey'
 #app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:@localhost/compscsoc" 
 app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://testing:testing@123@localhost/compsocssc"
 # app.config['UPLOAD_FOLDER'] = "C:\\Users\\SSC\\Desktop\\Flask\\CompSocBlog\\static\\img"
+#uses a relative path name instead of a complete path name,
+#redirects all uploads to the folder .static/img/ within the project folder
+app.config['UPLOAD_FOLDER'] = './static/img'
+#Popular Image file extensions, can be supplemented later on
+ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff' }
 
 db = SQLAlchemy(app) # INITIALIZE THE DATABASE
 
@@ -62,11 +67,11 @@ def home():
     posts= posts[int((Page-1)*4):int((Page-1)*4+4)]
     #Conditions for the previous and next pages
     if (Page==1):
-        Previous='#'
+        Previous=''
         #makes sure to recast page to a string for use in the URL
         Next="/?Page="+str(Page+1)
     elif (Page==last):
-        Next='#'
+        Next=''
         Previous="/?Page="+str(Page-1)
     else:
         Previous="/?Page="+str(Page-1)
@@ -110,7 +115,7 @@ def contact():
     return render_template('contact.html')
 
 #handles individual post pages, by the post slug set
-@app.route("/Post/<string:post_slug>", methods=['GET'])
+@app.route("/post/<string:post_slug>", methods=['GET'])
 def post_route(post_slug):
      #checks that the post slug contains no characters other than alphanumeric ones and '-'
     # \W = any character not [A-Za-z0-9_]
@@ -129,7 +134,7 @@ def post_route(post_slug):
 #wondering whether to move these all to /dashboard/ to prevent rogue users accessing areas of the site
 #uploader section handles the uploading of files
 #Also converting all of the naming to either camelCase (first letter of word small, otherFirstLettersCapitalized)
-@app.route("/Uploader", methods=['GET', 'POST'])
+@app.route("/dashboard/uploader", methods=['GET', 'POST'])
 def Upload():
     #might need to add more validation here, rogue users may still be able to view the form
      # Only Loggged In user can edit the post
@@ -165,7 +170,7 @@ def Logout():
 
 #edit section handles editing/creating articles
 #<int:PostId> forces the get value to only be an integer, saving from XSS
-@app.route("/edit/<int:PostId>", methods = ['GET', 'POST'])
+@app.route("/dashboard/edit/<int:PostId>", methods = ['GET', 'POST'])
 def edit(PostId):
     # Only Loggged In user can edit the post
     if ('Admin' in session and session['Admin']=="Compssc"):
@@ -192,16 +197,14 @@ def edit(PostId):
                 if post.PostId != PostId and PrevSlug == post.slug:
                     #flash method passes the error to the redirected page
                     flash("Another post exists with the same slug, please modify")
-                    return redirect('/edit/'+str(PostId))
+                    return redirect('/dashboard/edit/'+str(PostId))
             #for creating a new post, basically uses the same page
             #same pattern matching as in post URL, checking to make sure no special characters are allowed in the slug
             match = search(r"\W", PrevSlug)
             #if character found, then flash error message
             if match:
                 flash("Cannot use any character other than A-Z, a-z, 0-9 and _ in the slug")
-                return redirect('/edit/'+str(PostId))
-            PostId = str(PostId) 
-            
+                return redirect('/dashboard/edit/'+str(PostId))
             # creates a new post, using the same edit page 
             if PostId=='0':
                 Post = Posts(PostTitle=PrevTitle, PostContent=PrevContent, ImgFile=PrevImg, PostedBy=Author, slug=PrevSlug, DT=Dt)
@@ -220,9 +223,9 @@ def edit(PostId):
                 db.session.commit()
                 flash("You have edited a Article,successfully ","success")
     
-                return redirect('/edit/'+PostId)
-        else:
-            return redirect('/')        
+                return redirect('/dashboard/edit/'+str(PostId))
+    else:
+        return redirect('/')        
     Post=Posts.query.filter_by(PostId=PostId).first()
     return render_template('edit.html',  Post=Post, PostId=PostId)
 
