@@ -10,9 +10,9 @@ from werkzeug.utils import secure_filename
 from werkzeug.exceptions import RequestEntityTooLarge 
 app = Flask(__name__)
 app.secret_key='secretkey'
-#app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:@localhost/compscsoc" 
-app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://testing:testing@123@localhost/compsocssc"
-# app.config['UPLOAD_FOLDER'] = "C:\\Users\\SSC\\Desktop\\Flask\\CompSocBlog\\static\\img"
+# app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:@localhost/compscsoc"  #Database connectivity for Harsh System
+app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://testing:testing@123@localhost/compsocssc" #Dtabase connectiviy in the server
+
 #uses a relative path name instead of a complete path name,
 #redirects all uploads to the folder .static/img/ within the project folder
 app.config['UPLOAD_FOLDER'] = './static/img'
