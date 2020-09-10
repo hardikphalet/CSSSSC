@@ -9,9 +9,33 @@ import os
 from werkzeug.utils import secure_filename 
 from werkzeug.exceptions import RequestEntityTooLarge 
 app = Flask(__name__)
-app.secret_key='secretkey'
-# app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:@localhost/compscsoc"  #Database connectivity for Harsh System
-app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://testing:testing@123@localhost/compsocssc" #Dtabase connectiviy in the server
+#better encryption than using a secret key called "secret key"
+app.secret_key=str(os.urandom(16))
+
+#SQLAlchemy connection info for the different systems this runs on
+SQLALCHEMY_DATABASE_URI = "mysql://{username}:{password}@{hostname}/{databasename}". format(
+    #PythonAnywhere Server
+    #remember to change mysql to mysql+mysqlconnector
+    # username = "cssssc",
+    # password = "<cannot be revealed for security purposes>",
+    # hostname = "cssssc.mysql.pythonanywhere-services.com",
+    # databasename = "cssssc$compsocssc",
+    #Harsh System
+    # username = "root",
+    # password = "",
+    # hostname = "localost",
+    # databasename = "compscsoc",
+    #Lael System
+    username = "testing",
+    password = "testing@123",
+    hostname = "localhost",
+    databasename = "compsocssc",
+)
+#Does the actual connection
+app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
+#removes the warning, setting it to false doesn't track modifications of the objects created.
+#Keeping it false, because it takes extra memory on the server, and it's recommended that we keep it falses
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 #uses a relative path name instead of a complete path name,
 #redirects all uploads to the folder .static/img/ within the project folder
@@ -290,7 +314,9 @@ def dashboard():
     else:
         return render_template('signUp.html')    
 
-app.run(debug=True)
+#Without the if statement, causes errors on the production server, also better practice to always include it in a program
+if __name__ == '__main__':
+    app.run(debug=True)
 
 
 
