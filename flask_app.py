@@ -264,7 +264,7 @@ def edit(PostId):
                 flash("Cannot use any character other than A-Z, a-z, 0-9 and _ in the slug")
                 return redirect('/dashboard/edit/'+str(PostId))
             # creates a new post, using the same edit page 
-            if PostId=='0':
+            if PostId==0:
                 Post = Posts(PostTitle=PrevTitle, PostContent=PrevContent, ImgFile=PrevImg, PostedBy=Author, slug=PrevSlug, DT=Dt)
                 db.session.add(Post)
                 db.session.commit()
