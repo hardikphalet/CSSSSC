@@ -39,11 +39,12 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 #uses a relative path name instead of a complete path name,
 #redirects all uploads to the folder .static/img/ within the project folder
-app.config['UPLOAD_FOLDER'] = './static/img'
+app.config['UPLOAD_FOLDER'] = './static/img/'
+#app.config['UPLOAD_FOLDER'] = '/home/cssssc/mysite/static/img'
 #Popular Image file extensions, can be supplemented later on
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff' }
-#sets the maximum file size that can be uploaded to 10MB
-app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
+#sets the maximum file size that can be uploaded to 5MB
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024
 
 db = SQLAlchemy(app) # INITIALIZE THE DATABASE
 
@@ -62,7 +63,7 @@ class Posts(db.Model): # This Posts Class is for Posts table
     __tablename__='posts' #Always better to assume strict checking of SQL
     PostId = db.Column(db.Integer, primary_key=True)
     PostTitle = db.Column(db.String(80), nullable=False)
-    PostContent = db.Column(db.String(500), nullable=False)
+    PostContent = db.Column(db.String(1000), nullable=False)
     ImgFile = db.Column(db.String(50), nullable=False)
     PostedBy = db.Column(db.String(20), nullable=False)
     slug = db.Column(db.String(20), nullable=False)
@@ -179,12 +180,16 @@ def Upload():
             if 'ImgF' not in request.files:
                 flash("No file uploaded", "danger")
                 return redirect('/dashboard')
+            else:
+                flash("File was successfully chosen","success")
 
             FileComing=request.files['ImgF']
             #Checks to see if filename not blank
             if FileComing.filename == '':
                 flash("No selected file for upload", "danger")
                 return redirect('/dashboard')
+            else:
+                flash("Filename not empty!","success")
 
             if FileComing and allowed_file(FileComing.filename):
                 #save the file in the path given in the UPLOAD FOLDER VARIABLE  at line 14/15
