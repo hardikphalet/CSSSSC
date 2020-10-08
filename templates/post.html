@@ -38,13 +38,41 @@
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
           {% for para in Post.PostContent %}
-          <p>{{para}}</p>
+          <p class="para">{{para}}</p>
         {% endfor %}
 
           </div>
       </div>
     </div>
   </article>
-
+  <script>
+    /*
+    Script used by the clients browser to auto add the necessary formatting (bold, italic)
+    required in the article as well as support links to other webpages
+    How to format
+    Bold - \# Insert all your bold text here #\
+    Italic - \_ insert all your italic text here _\
+    Linking
+      \[link to external site (including the https://) goes here]\\{Text that we want to link goes here}\
+    */
+    // JS first used to get all the paragraphs in an article, identified by class para
+    let paras = document.getElementsByClassName("para");
+    // Loop through each paragraph
+    for (let i = 0; i < paras.length; i++) {
+      // convenient naming for us to use, assigns the temp variable to our HTML within the paragraph
+      let p = paras[i].innerHTML;
+      // rewrites the paragraph, replacing the characters with the corresponding tags required
+      p = p.replace(/\\_/g, "<em>");
+      p = p.replace(/_\\/g, "</em>");
+      p = p.replace(/\\#/g, "<strong>");
+      p = p.replace(/#\\/g, "</strong>");
+      p = p.replace(/\\\[/g, "<a href=\"");
+      p = p.replace(/]\\/g, "\">");
+      p = p.replace(/\\\{/g, "");
+      p = p.replace(/\}\\/g, "</a>");
+      // sets the paragraph HTML to the new and improved version
+      paras[i].innerHTML = p;
+    }
+  </script>
 
 {% endblock %}
