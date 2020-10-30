@@ -1,0 +1,43 @@
+{% extends "layout.html" %}  
+{% block body %}     
+<!-- Page Header -->
+<header class="masthead" style="background-image: url(' {{ url_for('static', filename='img/about-bg.jpg')}}')">
+    <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-10 mx-auto">
+                    <div class="page-heading">
+                        <h1>Sponsors</h1>
+                        <span class="subheading">Our events and the work we do would not be possible, without the people, organisations and platforms mentioned on this page. Do check them out, we really can't thank them enough.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 col-md col-lg card">
+            <img src="{{url_for('static', filename='img/UofDOfficialLogo.jpg')}}" alt="University of Delhi Official" class="card-img-top">
+            <div class="card-body">
+                <h5 class="card-title">Delhi University Official</h5>
+                <a target="_blank" href="https://www.du.ac.in/du/" class="btn btn-primary">Visit</a>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md col-lg card">
+            <img src="{{url_for('static', filename='img/DURefreshNewsLogo.jpg')}}" alt="DU Refresh News" class="card-img-top">
+            <div class="card-body">
+                <h5 class="card-title">DU Refresh News</h5>
+                <a target="_blank" href="https://www.facebook.com/DUrefreshnews/" class="btn btn-primary">Visit</a>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md col-lg card">
+            <img src="{{url_for('static', filename='img/DUBulletinLogo.jpg')}}" alt="DU Bulletin" class="card-img-top">
+            <div class="card-body">
+                <h5 class="card-title">DU Bulletin</h5>
+                <a target="_blank" href="https://www.facebook.com/OfficialDUBulletin/" class="btn btn-primary">Visit</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

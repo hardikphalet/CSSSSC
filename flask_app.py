@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.secret_key=str(os.urandom(16))
 
 #SQLAlchemy connection info for the different systems this runs on
-SQLALCHEMY_DATABASE_URI = "mysql://{username}:{password}@{hostname}/{databasename}". format(
+SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://{username}:{password}@{hostname}/{databasename}". format(
     #PythonAnywhere Server
     #remember to change mysql to mysql+mysqlconnector
     # username = "cssssc",
@@ -114,6 +114,11 @@ def home():
 @app.route("/about")
 def about():
     return render_template('about.html')
+
+# Leads to Sponsors section
+@app.route("/sponsors")
+def sponsors():
+    return render_template('sponsors.html')
 
 # Leads to the contact us page
 @app.route("/contact", methods=['GET', 'POST'])
