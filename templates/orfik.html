@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block body%}
+  <!-- Page Header -->
+  <header class="masthead mb-0"  style="background-image: url(' {{ url_for('static', filename='img/contact-bg.jpg')}}')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="page-heading">
+            <h1>Welcome to Orfik</h1>
+            <span class="subheading">The following images should lead you to the link to the first clue. The rules for the treasure hunt are given below.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="container">
+      <br><br>
+      <h3>Your first clue is: </h3>
+      <br>
+      <div class="container" style="display: inline;">
+        <img style="width:120px;"src="../static/img/orfikclue1/1.svg" alt="Flag">
+        <img style="width:120px;"src="../static/img/orfikclue1/2.svg" alt="Flag">
+        <img style="width:120px;"src="../static/img/orfikclue1/3.svg" alt="Flag">
+        <img style="width:120px;"src="../static/img/orfikclue1/4.svg" alt="Flag">
+        <img style="width:120px;"src="../static/img/orfikclue1/5.svg" alt="Flag">
+      </div>
+      <p>There's a reason these flags were chosen, in this particular order. Eliminate what's common from them all, and think about how what you end up getting will lead you to your first answer.</p>
+  </div>
+  <div class="container">
+    <h3>Rules for Playing Orfik2021</h3>
+    <br>
+    <div class="container">
+      <ul>
+        <li>Don't Panic!</li>
+        <li>Some hints may be uploaded to our Instagram page, so keep an eye out there. @compsoc.ssc</li>
+        <li>If you think you've got a clue figured out, please enter this url into the address bar of your browser:<br><em>tinyurl.com/Orfikclue-#Insert your answer here#</em><br>For example: <em>tinyurl.com/Orfikclue-iloveyou3000</em></li>
+        <li>No answer has an uppercase character, enter your answers in lowercase. If there are multiple letters, do not use spaces.</li>
+        <li>If you find yourself in a place that seems suspicious, or wrong, read everything on the page so that you get some sort of hint as to where to go. If you find yourself lost, go back to the last place you remember and start again.</li>
+        <li>Googling is welcome, and will help you with finishing this treasure hunt in time. We've designed the questions accordingly. </li>
+        <li>This treasure hunt is free for all to play at any time, but prizes will only be awarded for those who finish on the 24th of January, 2021.</li>
+      </ul>
+    </div>
+</div>
+{% endblock %}

@@ -120,6 +120,12 @@ def about():
 def sponsors():
     return render_template('sponsors.html')
 
+# Leads to Orfik section
+@app.route("/orfik")
+def orfik2021():
+    return render_template('orfik.html')
+
+
 # Leads to the contact us page
 @app.route("/contact", methods=['GET', 'POST'])
 def contact():
